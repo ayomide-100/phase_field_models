@@ -2,7 +2,7 @@
 
 This project compares the two time integrators in the `pfm` phase-field code,
 **explicit Euler** and the **semi-implicit spectral scheme**, on a Cahn-Hilliard
-phase-separation problem. For a range of time steps `dt` it measures
+phase-separation problem using the **Landau** free energy model for a range of time steps `dt` it measures.
 
 1. **stability**: does the simulation stay finite up to the final time?
 2. **accuracy**: how far is the result from a fine-time-step reference?
@@ -238,3 +238,6 @@ Finished cases are saved and skipped on re-runs, so an interrupted run can be re
 | `benchmark/analyze.py` | builds the table and the four figures from the saved cases |
 | `benchmark/results/raw/` | one `.npz` file per case (final field, energy, mass, finite flags, timings) |
 | `benchmark/results/` | `results_table.csv`, `results_table.md`, `fig1` to `fig4` |
+
+
+
