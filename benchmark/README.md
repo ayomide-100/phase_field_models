@@ -4,6 +4,8 @@ This project compares the two time integrators in the `pfm` phase-field code,
 **explicit Euler** and the **semi-implicit spectral scheme**, on a Cahn-Hilliard
 phase-separation problem using the **Landau** free energy model for a range of time steps `dt` it measures.
 
+![LandauSimulation](./images/landau_simulation.gif)
+
 1. **stability**: does the simulation stay finite up to the final time?
 2. **accuracy**: how far is the result from a fine-time-step reference?
 3. **computational time**: how long does a run take, and what does a given accuracy cost?
@@ -239,5 +241,9 @@ Finished cases are saved and skipped on re-runs, so an interrupted run can be re
 | `benchmark/results/raw/` | one `.npz` file per case (final field, energy, mass, finite flags, timings) |
 | `benchmark/results/` | `results_table.csv`, `results_table.md`, `fig1` to `fig4` |
 
+
+## 6. Citation
+
+Vetturini, A. J. (2026). *Phase Field Models using JAX* (v1.0.0) [Software]. Zenodo. [https://doi.org/10.5281/zenodo.18713642](https://doi.org/10.5281/zenodo.18713642)
 
 
