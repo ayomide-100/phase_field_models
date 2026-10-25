@@ -1,0 +1,17 @@
+steps = 150000
+print_every = 10000
+print_trajectory_every = 50000 
+N = 64
+dt = 0.001
+free_energy = "landau"
+integrator = "spectral"
+model = 'CH'
+use_autodiff = false
+interface_scalar = 2.0
+initial_density = 0.01
+float_type = "float64"
+write_path = "Landau/spectral_big"
+load_from = "Examples/Landau/standard_input.dat"
+
+[landau]
+epsilon = 0.9

@@ -1,0 +1,107 @@
+from matplotlib import pyplot as plt
+import numpy as np
+
+def plot_density(fp: str, constant_range: bool = False, **kwargs):
+    """Plots a single file's worth of data (e.g., a frame of the data)."""
+    data = np.loadtxt(fp)
+    plt.figure()
+    plt.title(fp)
+    im = plt.imshow(data, **kwargs)
+    if constant_range:
+        plt.clim(-1, 1)  # Set range
+    plt.colorbar(im, )
+    plt.show()
+
+def plot_all_densities(list_of_fps: list, list_of_kwargs: list):
+    """Plots multiple files, each with its corresponding keyword arguments."""
+    for fp, kwargs in zip(list_of_fps, list_of_kwargs):
+        plot_density(fp, **kwargs)
+
+
+def _get_energy(fp: str):
+    data = np.loadtxt(fp)
+    time, avg_energy, avg_density, timesteps = data[:, 0], data[:, 1], data[:, 2], data[:, 3]
+    return time, avg_energy, avg_density, timesteps
+
+
+def plot_energy(fp: str, **kwargs):
+    """ Plots the average free energy and average mass density against time from a simulation """
+    t, e, rho, tsteps = _get_energy(fp)
+
+    if kwargs.get('use_timesteps', False):
+        t = tsteps
+
+    fig, axs = plt.subplots(1, 2, figsize=(8, 6))
+    fig.suptitle('Simulation Energy and Mass Density vs. t')
+
+    axs[0].plot(t, e)
+    axs[0].set_xlabel('Time')
+    axs[0].set_ylabel('Average Free Energy')
+    axs[0].set_title('Average Free Energy vs. t')
+
+    axs[1].plot(t, rho)
+    axs[1].set_xlabel('Time')
+    axs[1].set_ylabel('Average Mass Density')
+    axs[1].set_title('Average Mass Density vs. t')
+
+    plt.show()
+
+def plot_all_energies(list_of_fps: list, **kwargs):
+    """ Plots multiple files, each with its corresponding keyword arguments."""
+
+    all_t, all_e, all_rho, all_step = [], [], [], []
+    for fp in list_of_fps:
+        nt, ne, nr, nt = _get_energy(fp)
+        all_t.append(nt)
+        all_e.append(ne)
+        all_rho.append(nr)
+        all_step.append(nt)
+
+    fig, axs = plt.subplots(1, 2, figsize=(8, 4))
+    all_labels = kwargs.get('labels', [])
+
+    for ct, (i, j) in enumerate(zip(all_t, all_e)):
+        if all_labels:
+            axs[0].plot(i, j, label=all_labels[ct])
+        else:
+            axs[0].plot(i, j)
+        axs[0].set_xlabel('Time steps')
+        axs[0].set_ylabel('Average Free Energy')
+        axs[0].legend()  # Add legend to the first subplot
+
+    for ct, (i, j) in enumerate(zip(all_t, all_rho)):
+        if all_labels:
+            axs[1].plot(i, j, label=all_labels[ct])
+        else:
+            axs[1].plot(i, j)
+        axs[1].set_xlabel('Time steps')
+        axs[1].set_ylabel('Average Mass Density')
+        axs[1].ticklabel_format(axis='y', style='sci')
+        axs[1].set_ylim(-0.1, 0.1)
+
+    plt.tight_layout(rect=[0, 0.03, 1, 0.95])
+    plt.show()
+
+def plot_multispecies_densities(list_of_fps: list, plot_title: str = None, constant_range: bool = False, **kwargs):
+    """ Plots a multispecies solution by overlaying the multispecies configuration files """
+    # Similar to https://github.com/lorenzo-rovigatti/cahn-hilliard/blob/main/plot_saleh.py
+    rho_max = 0
+    data = []
+    for i, f in enumerate(list_of_fps):
+        conf_data = np.loadtxt(f)
+        data.append(conf_data)
+        data_max = np.max(conf_data)
+        if data_max > rho_max:
+            rho_max = data_max
+
+    # Rearrange and show:
+    data = (np.dstack(data / rho_max) * 259.999).astype(np.uint8)  # Convert to b256 safely
+
+    plt.figure()
+    plt.title(plot_title if plot_title is not None else '')
+    im = plt.imshow(data, **kwargs)
+    if constant_range:
+        plt.clim(-1, 1)
+    plt.colorbar(im, )
+    plt.show()
+
